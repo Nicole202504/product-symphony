@@ -1,0 +1,36 @@
+modes:
+  explore:
+    label: "mode: explore"
+    branch_prefix: "experiment"
+    workflow: "workflows/explore.md"
+    default_merge_policy: "do not merge"
+    default_result: "continue, convert to prototype, convert to build, park, or discard"
+
+  prototype:
+    label: "mode: prototype"
+    branch_prefix: "prototype"
+    workflow: "workflows/prototype.md"
+    default_merge_policy: "do not merge unless converted to build"
+    default_result: "continue, convert to build, park, or discard"
+
+  build:
+    label: "mode: build"
+    branch_prefix: "feature"
+    workflow: "workflows/build.md"
+    default_merge_policy: "prepare for review and merge"
+    default_result: "review, ready to merge, or needs rework"
+
+  park:
+    label: "mode: park"
+    branch_prefix: "parked"
+    workflow: null
+    default_merge_policy: "inactive"
+    default_result: "no agent execution"
+
+  discard:
+    label: "mode: discard"
+    branch_prefix: "discarded"
+    workflow: null
+    default_merge_policy: "do not merge"
+    default_result: "archive context and stop"
+
