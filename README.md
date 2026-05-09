@@ -57,8 +57,7 @@ build is the only mode that targets production merge by default.
 Use the Elixir Symphony runner with the product workflow:
 
 ```bash
-cd elixir
-./bin/symphony ./WORKFLOW.product.md
+./scripts/run-product-symphony.sh
 ```
 
 The runner polls the configured Linear project. For every eligible issue, it:
@@ -93,17 +92,16 @@ Product Symphony includes a first bootstrap command for turning a markdown brief
 Linear project with labeled issues:
 
 ```bash
-cd elixir
-./bin/symphony product.bootstrap \
+./scripts/bootstrap-linear.sh \
   --team ENG \
   --project "AI Onboarding Dashboard" \
-  --brief ../examples/bootstrap-brief.md
+  --brief examples/bootstrap-brief.md
 ```
 
 Use `--dry-run` first to inspect the payload without creating anything:
 
 ```bash
-./bin/symphony product.bootstrap --team ENG --brief ../examples/bootstrap-brief.md --dry-run
+./scripts/bootstrap-linear.sh --team ENG --brief examples/bootstrap-brief.md --dry-run
 ```
 
 The brief format is intentionally explicit:
@@ -141,6 +139,8 @@ linear/templates/               Issue and result comment templates.
 workflows/                      Mode-specific workflow docs.
 elixir/WORKFLOW.product.md      Product-aware Symphony runtime workflow.
 examples/bootstrap-brief.md     Example bootstrap input.
+docs/startup.md                 Runtime setup model and wrapper scripts.
+scripts/                        Stable setup/run entrypoints for new agents.
 elixir/                         Upstream Symphony Elixir implementation.
 ```
 

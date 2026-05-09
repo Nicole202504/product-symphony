@@ -18,6 +18,12 @@ linear/templates/
 config/modes.yaml
 ```
 
+If you are running the orchestrator, use the repo directly and run:
+
+```text
+./scripts/setup.sh
+```
+
 ## 2. Create Linear Labels
 
 Create these labels in Linear:
@@ -49,8 +55,7 @@ Add one `mode:*` label.
 After building the Elixir escript, create a Linear project and initial issues from a markdown brief:
 
 ```text
-cd elixir
-./bin/symphony product.bootstrap --team ENG --project "Project Name" --brief ../examples/bootstrap-brief.md --dry-run
+./scripts/bootstrap-linear.sh --team ENG --project "Project Name" --brief examples/bootstrap-brief.md --dry-run
 ```
 
 Remove `--dry-run` when the generated project and issues look right.
