@@ -161,6 +161,24 @@ See `docs/feedback-loop.md`.
 The scripts load `.env.local` from the repository root when present. Keep real secrets in
 `.env.local`; commit only `.env.example`.
 
+## Repository Handoff Ledger
+
+Linear is still the source of truth for agent execution, but some downstream engineering teams review
+work through GitHub rather than Linear. In those projects, keep a repo-tracked handoff document for
+durable decisions and engineering context.
+
+Recommended downstream path:
+
+```text
+docs/product-rebaseline-context.md
+```
+
+Use Linear for issue status and agent result comments. Use the repo handoff document for stable
+context such as product decisions, MVP boundaries, information architecture, data/API contracts, and
+engineering handoff notes.
+
+See `docs/repo-handoff.md`.
+
 ## Important Files
 
 ```text
@@ -175,6 +193,7 @@ elixir/WORKFLOW.product.md      Product-aware Symphony runtime workflow.
 examples/bootstrap-brief.md     Example bootstrap input.
 docs/startup.md                 Runtime setup model and wrapper scripts.
 docs/feedback-loop.md           Automatic issue reporting from downstream projects.
+docs/repo-handoff.md            Linear plus repo-doc handoff model for downstream engineering.
 scripts/                        Stable setup/run entrypoints for new agents.
 elixir/                         Upstream Symphony Elixir implementation.
 ```

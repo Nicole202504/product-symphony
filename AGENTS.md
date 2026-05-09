@@ -41,6 +41,36 @@ The comment must include:
 - Recommendation.
 - Whether the result should merge, continue, convert to build, park, or discard.
 
+## Repository Handoff Rule
+
+Linear remains the source of truth for agent execution. When downstream engineers do not work from
+Linear, also keep a repo-tracked handoff document for durable product and engineering context.
+
+Use this pattern when the product owner or repository asks for local handoff docs:
+
+- Linear records issue status, session results, files changed, verification, and recommendation.
+- Repository docs record durable context that future engineers or agents need without opening
+  Linear.
+
+Recommended downstream handoff path:
+
+```text
+docs/product-rebaseline-context.md
+```
+
+Update the repository handoff document only when an issue creates durable context, such as:
+
+- product direction or MVP scope;
+- information architecture;
+- data model or API contract;
+- accepted or abandoned implementation boundaries;
+- engineering handoff notes.
+
+Do not duplicate ordinary issue execution details in the repository handoff document. Keep those in
+the Linear result comment.
+
+See `docs/repo-handoff.md`.
+
 ## Downstream Tool Feedback
 
 When this repository is used from another business project and you discover a Product Symphony bug,

@@ -104,6 +104,21 @@ PRODUCT_SYMPHONY_FEEDBACK_TEAM_KEY
 PRODUCT_SYMPHONY_FEEDBACK_PROJECT_SLUG
 ```
 
+## 7. Keep A Repo Handoff When Engineers Do Not Use Linear
+
+Linear should manage agent execution. If downstream engineers mainly review GitHub, also keep a
+repo-tracked handoff document:
+
+```text
+docs/product-rebaseline-context.md
+```
+
+Update Linear after every issue. Update the repo handoff only for durable decisions that future
+engineers or agents need, such as MVP scope, information architecture, data/API contracts, or
+accepted implementation boundaries.
+
+See `docs/repo-handoff.md`.
+
 ## First Version Promise
 
 The product owner should only need to:
