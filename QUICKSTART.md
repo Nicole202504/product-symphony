@@ -44,6 +44,17 @@ Pick the matching template:
 
 Add one `mode:*` label.
 
+## Optional: Bootstrap A Linear Project
+
+After building the Elixir escript, create a Linear project and initial issues from a markdown brief:
+
+```text
+cd elixir
+./bin/symphony product.bootstrap --team ENG --project "Project Name" --brief ../examples/bootstrap-brief.md --dry-run
+```
+
+Remove `--dry-run` when the generated project and issues look right.
+
 ## 4. Start An Agent
 
 Use this prompt:

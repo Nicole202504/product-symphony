@@ -87,6 +87,48 @@ unit of allocation.
    demo work, and product review.
 6. Product owner decides whether to continue, convert to build, park, discard, or merge.
 
+## Product Bootstrap CLI
+
+Product Symphony includes a first bootstrap command for turning a markdown brief/task map into a
+Linear project with labeled issues:
+
+```bash
+cd elixir
+./bin/symphony product.bootstrap \
+  --team ENG \
+  --project "AI Onboarding Dashboard" \
+  --brief ../examples/bootstrap-brief.md
+```
+
+Use `--dry-run` first to inspect the payload without creating anything:
+
+```bash
+./bin/symphony product.bootstrap --team ENG --brief ../examples/bootstrap-brief.md --dry-run
+```
+
+The brief format is intentionally explicit:
+
+```md
+# Project Name
+
+### Explore: First-run user mental model
+mode: explore
+deliverable: Option memo
+acceptance: Recommendation posted to Linear
+
+### Build: Persist checklist progress
+mode: build
+deliverable: Production implementation
+acceptance: Progress persists across refresh
+```
+
+The command creates:
+
+- a Linear project;
+- the `mode:*` labels if missing;
+- one Linear issue per task;
+- issue descriptions containing mode, deliverable, and acceptance criteria.
+
 ## Important Files
 
 ```text
@@ -98,6 +140,7 @@ LINEAR_AGENT_PROMPT.md          Manual fallback prompt for Codex/Claude.
 linear/templates/               Issue and result comment templates.
 workflows/                      Mode-specific workflow docs.
 elixir/WORKFLOW.product.md      Product-aware Symphony runtime workflow.
+examples/bootstrap-brief.md     Example bootstrap input.
 elixir/                         Upstream Symphony Elixir implementation.
 ```
 
@@ -105,4 +148,3 @@ elixir/                         Upstream Symphony Elixir implementation.
 
 The Symphony implementation is based on OpenAI's Apache-2.0 licensed Symphony project. See
 `LICENSE`, `NOTICE`, and `SPEC.md`.
-

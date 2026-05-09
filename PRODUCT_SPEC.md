@@ -120,7 +120,35 @@ Recommended states:
 - `Parked`
 - `Discarded`
 
-## 5. First Runtime Version
+## 5. Product Bootstrap CLI
+
+The first bootstrap implementation accepts an explicit markdown task map and creates Linear
+resources.
+
+Command:
+
+```bash
+symphony product.bootstrap --team <TEAM_KEY> --brief <brief.md> [--project <NAME>] [--dry-run]
+```
+
+Input:
+
+- H1 project name.
+- Task sections using `### Explore: ...`, `### Prototype: ...`, `### Build: ...`, or an explicit
+  `mode:` field.
+- `deliverable:` and `acceptance:` fields per task.
+
+Output:
+
+- Linear project.
+- `mode:*` labels.
+- Initial Linear issues with mode, deliverable, and acceptance criteria.
+
+This version does not yet ask an AI to infer the issue breakdown from a loose conversation. The
+product owner or agent first turns the conversation into a markdown brief, then the CLI creates the
+Linear project structure.
+
+## 6. First Runtime Version
 
 The first runnable version is upstream Symphony plus `elixir/WORKFLOW.product.md`.
 
@@ -141,4 +169,3 @@ The product behavior lives in:
 
 Future versions may add first-class Elixir modules for automatic Linear project creation and label
 setup.
-

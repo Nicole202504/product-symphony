@@ -18,6 +18,17 @@ defmodule SymphonyElixir.CLI do
         }
 
   @spec main([String.t()]) :: no_return()
+  def main(["product.bootstrap" | _] = args) do
+    case evaluate(args) do
+      :ok ->
+        System.halt(0)
+
+      {:error, message} ->
+        IO.puts(:stderr, message)
+        System.halt(1)
+    end
+  end
+
   def main(args) do
     case evaluate(args) do
       :ok ->
@@ -30,7 +41,13 @@ defmodule SymphonyElixir.CLI do
   end
 
   @spec evaluate([String.t()], deps()) :: :ok | {:error, String.t()}
-  def evaluate(args, deps \\ runtime_deps()) do
+  def evaluate(args, deps \\ runtime_deps())
+
+  def evaluate(["product.bootstrap" | args], _deps) do
+    SymphonyElixir.Product.Bootstrap.CLI.run(args)
+  end
+
+  def evaluate(args, deps) do
     case OptionParser.parse(args, strict: @switches) do
       {opts, [], []} ->
         with :ok <- require_guardrails_acknowledgement(opts),
@@ -72,7 +89,12 @@ defmodule SymphonyElixir.CLI do
 
   @spec usage_message() :: String.t()
   defp usage_message do
-    "Usage: symphony [--logs-root <path>] [--port <port>] [path-to-WORKFLOW.md]"
+    """
+    Usage:
+      symphony [--logs-root <path>] [--port <port>] [path-to-WORKFLOW.md]
+      symphony product.bootstrap --team <TEAM_KEY> --project <NAME> --brief <brief.md> [--dry-run]
+    """
+    |> String.trim()
   end
 
   @spec runtime_deps() :: deps()
