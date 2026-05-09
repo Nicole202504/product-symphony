@@ -2,6 +2,11 @@
 tracker:
   kind: linear
   project_slug: "replace-with-linear-project-slug"
+  # Optional alternatives:
+  # project_slugs:
+  #   - "project-a-slug"
+  #   - "project-b-slug"
+  # initiative_id: "replace-with-linear-initiative-id"
   active_states:
     - Idea
     - Exploring
@@ -209,4 +214,3 @@ Merge / do not merge / convert before merge.
 
 Continue / Convert to prototype / Convert to build / Needs rework / Ready to merge / Park / Discard
 ```
-

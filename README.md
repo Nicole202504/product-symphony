@@ -72,6 +72,38 @@ The runner polls the configured Linear project. For every eligible issue, it:
 That means Product Symphony does not need a separate manual worktree step. The issue itself is the
 unit of allocation.
 
+### Linear Scope
+
+The default workflow targets one Linear project:
+
+```yaml
+tracker:
+  kind: linear
+  project_slug: "my-project"
+```
+
+For product rebaseline work that spans multiple projects, configure a project group:
+
+```yaml
+tracker:
+  kind: linear
+  project_slugs:
+    - "a-personal-space-rebuild-1c478af653df"
+    - "b-github-skill-ingestion-058deef57088"
+    - "c-landing-page-usable-paths-7024e2fc19ab"
+```
+
+Or target every project attached to a Linear initiative:
+
+```yaml
+tracker:
+  kind: linear
+  initiative_id: "7a85d8a6-4c57-4259-84d5-e5c6a9ce2818"
+```
+
+If both `project_slug` / `project_slugs` and `initiative_id` are present, Product Symphony polls the
+union and de-duplicates issues by Linear issue ID.
+
 ## Recommended Linear Flow
 
 Default Linear hierarchy:

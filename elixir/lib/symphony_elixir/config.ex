@@ -125,13 +125,22 @@ defmodule SymphonyElixir.Config do
       settings.tracker.kind == "linear" and not is_binary(settings.tracker.api_key) ->
         {:error, :missing_linear_api_token}
 
-      settings.tracker.kind == "linear" and not is_binary(settings.tracker.project_slug) ->
-        {:error, :missing_linear_project_slug}
+      settings.tracker.kind == "linear" and not linear_project_scope?(settings.tracker) ->
+        {:error, :missing_linear_project_scope}
 
       true ->
         :ok
     end
   end
+
+  defp linear_project_scope?(tracker) do
+    non_blank?(tracker.project_slug) or
+      Enum.any?(List.wrap(tracker.project_slugs), &non_blank?/1) or
+      non_blank?(tracker.initiative_id)
+  end
+
+  defp non_blank?(value) when is_binary(value), do: String.trim(value) != ""
+  defp non_blank?(_value), do: false
 
   defp format_config_error(reason) do
     case reason do

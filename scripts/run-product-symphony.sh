@@ -3,12 +3,13 @@ set -eu
 
 ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 ELIXIR_DIR="$ROOT_DIR/elixir"
-WORKFLOW_PATH="${1:-$ELIXIR_DIR/WORKFLOW.product.md}"
 
 if [ -f "$ROOT_DIR/.env.local" ]; then
   # shellcheck disable=SC1091
   . "$ROOT_DIR/.env.local"
 fi
+
+WORKFLOW_PATH="${1:-${PRODUCT_SYMPHONY_WORKFLOW_PATH:-$ELIXIR_DIR/WORKFLOW.product.md}}"
 
 if [ ! -x "$ELIXIR_DIR/bin/symphony" ]; then
   echo "Missing elixir/bin/symphony. Run ./scripts/setup.sh first."

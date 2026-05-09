@@ -46,7 +46,7 @@ defmodule SymphonyElixir.CoreTest do
       tracker_project_slug: nil
     )
 
-    assert {:error, :missing_linear_project_slug} = Config.validate!()
+    assert {:error, :missing_linear_project_scope} = Config.validate!()
 
     write_workflow_file!(Workflow.workflow_file_path(),
       tracker_project_slug: "project",
@@ -130,6 +130,27 @@ defmodule SymphonyElixir.CoreTest do
 
     assert Config.settings!().tracker.api_key == env_api_key
     assert Config.settings!().tracker.project_slug == "project"
+    assert :ok = Config.validate!()
+  end
+
+  test "linear project scope accepts project groups and initiative ids" do
+    write_workflow_file!(Workflow.workflow_file_path(),
+      tracker_project_slug: nil,
+      tracker_project_slugs: ["project-a", " project-b ", "project-a", ""],
+      codex_command: "/bin/sh app-server"
+    )
+
+    assert Config.settings!().tracker.project_slugs == ["project-a", "project-b"]
+    assert :ok = Config.validate!()
+
+    write_workflow_file!(Workflow.workflow_file_path(),
+      tracker_project_slug: nil,
+      tracker_project_slugs: [],
+      tracker_initiative_id: "initiative-id",
+      codex_command: "/bin/sh app-server"
+    )
+
+    assert Config.settings!().tracker.initiative_id == "initiative-id"
     assert :ok = Config.validate!()
   end
 

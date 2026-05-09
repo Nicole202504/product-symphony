@@ -125,6 +125,9 @@ Notes:
   identifier, title, and body.
 - Use `hooks.after_create` to bootstrap a fresh workspace. For a Git-backed repo, you can run
   `git clone ... .` there, along with any other setup commands you need.
+- Use `tracker.project_slugs` to poll a group of Linear projects in one runner. Use
+  `tracker.initiative_id` to poll all projects attached to one Linear initiative. If multiple scopes
+  are configured, Symphony polls their union and de-duplicates issues by ID.
 - If a hook needs `mise exec` inside a freshly cloned workspace, trust the repo config and fetch
   the project dependencies in `hooks.after_create` before invoking `mise` later from other hooks.
 - `tracker.api_key` reads from `LINEAR_API_KEY` when unset or when value is `$LINEAR_API_KEY`.

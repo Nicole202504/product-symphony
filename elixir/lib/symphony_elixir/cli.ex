@@ -40,9 +40,10 @@ defmodule SymphonyElixir.CLI do
     end
   end
 
-  @spec evaluate([String.t()], deps()) :: :ok | {:error, String.t()}
-  def evaluate(args, deps \\ runtime_deps())
+  @spec evaluate([String.t()]) :: :ok | {:error, String.t()}
+  def evaluate(args), do: evaluate(args, runtime_deps())
 
+  @spec evaluate([String.t()], deps()) :: :ok | {:error, String.t()}
   def evaluate(["product.bootstrap" | args], _deps) do
     SymphonyElixir.Product.Bootstrap.CLI.run(args)
   end

@@ -95,6 +95,22 @@ defmodule SymphonyElixir.Linear.Client do
   }
   """
 
+  @initiative_projects_query """
+  query SymphonyLinearInitiativeProjects($initiativeId: ID!, $first: Int!, $after: String) {
+    initiative(id: $initiativeId) {
+      projects(first: $first, after: $after) {
+        nodes {
+          slugId
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+  """
+
   @viewer_query """
   query SymphonyLinearViewer {
     viewer {
@@ -106,18 +122,15 @@ defmodule SymphonyElixir.Linear.Client do
   @spec fetch_candidate_issues() :: {:ok, [Issue.t()]} | {:error, term()}
   def fetch_candidate_issues do
     tracker = Config.settings!().tracker
-    project_slug = tracker.project_slug
 
     cond do
       is_nil(tracker.api_key) ->
         {:error, :missing_linear_api_token}
 
-      is_nil(project_slug) ->
-        {:error, :missing_linear_project_slug}
-
       true ->
-        with {:ok, assignee_filter} <- routing_assignee_filter() do
-          do_fetch_by_states(project_slug, tracker.active_states, assignee_filter)
+        with {:ok, project_slugs} <- resolve_project_slugs(tracker),
+             {:ok, assignee_filter} <- routing_assignee_filter() do
+          do_fetch_by_states_for_projects(project_slugs, tracker.active_states, assignee_filter)
         end
     end
   end
@@ -130,17 +143,15 @@ defmodule SymphonyElixir.Linear.Client do
       {:ok, []}
     else
       tracker = Config.settings!().tracker
-      project_slug = tracker.project_slug
 
       cond do
         is_nil(tracker.api_key) ->
           {:error, :missing_linear_api_token}
 
-        is_nil(project_slug) ->
-          {:error, :missing_linear_project_slug}
-
         true ->
-          do_fetch_by_states(project_slug, normalized_states, nil)
+          with {:ok, project_slugs} <- resolve_project_slugs(tracker) do
+            do_fetch_by_states_for_projects(project_slugs, normalized_states, nil)
+          end
       end
     end
   end
@@ -240,6 +251,82 @@ defmodule SymphonyElixir.Linear.Client do
     do_fetch_by_states_page(project_slug, state_names, assignee_filter, nil, [])
   end
 
+  defp do_fetch_by_states_for_projects(project_slugs, state_names, assignee_filter)
+       when is_list(project_slugs) do
+    project_slugs
+    |> Enum.reduce_while({:ok, []}, fn project_slug, {:ok, acc_issues} ->
+      case do_fetch_by_states(project_slug, state_names, assignee_filter) do
+        {:ok, issues} -> {:cont, {:ok, prepend_page_issues(issues, acc_issues)}}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
+    end)
+    |> case do
+      {:ok, issues} -> {:ok, issues |> finalize_paginated_issues() |> deduplicate_issues()}
+      error -> error
+    end
+  end
+
+  defp resolve_project_slugs(tracker) do
+    configured_project_slugs = configured_project_slugs(tracker)
+
+    with {:ok, initiative_project_slugs} <- resolve_initiative_project_slugs(tracker) do
+      project_slugs =
+        configured_project_slugs
+        |> Enum.concat(initiative_project_slugs)
+        |> normalize_project_slugs()
+
+      case project_slugs do
+        [] -> {:error, :missing_linear_project_scope}
+        slugs -> {:ok, slugs}
+      end
+    end
+  end
+
+  defp configured_project_slugs(tracker) do
+    [tracker.project_slug | List.wrap(tracker.project_slugs)]
+    |> normalize_project_slugs()
+  end
+
+  defp resolve_initiative_project_slugs(%{initiative_id: initiative_id})
+       when is_binary(initiative_id) and initiative_id != "" do
+    do_fetch_initiative_project_slugs(String.trim(initiative_id), nil, [])
+  end
+
+  defp resolve_initiative_project_slugs(_tracker), do: {:ok, []}
+
+  defp do_fetch_initiative_project_slugs(initiative_id, after_cursor, acc_slugs) do
+    with {:ok, body} <-
+           graphql(@initiative_projects_query, %{
+             initiativeId: initiative_id,
+             first: @issue_page_size,
+             after: after_cursor
+           }),
+         {:ok, slugs, page_info} <- decode_initiative_projects_page(body) do
+      updated_acc = Enum.reverse(slugs, acc_slugs)
+
+      case next_page_cursor(page_info) do
+        {:ok, next_cursor} ->
+          do_fetch_initiative_project_slugs(initiative_id, next_cursor, updated_acc)
+
+        :done ->
+          {:ok, updated_acc |> Enum.reverse() |> normalize_project_slugs()}
+
+        {:error, reason} ->
+          {:error, reason}
+      end
+    end
+  end
+
+  defp normalize_project_slugs(project_slugs) when is_list(project_slugs) do
+    project_slugs
+    |> Enum.map(fn
+      value when is_binary(value) -> String.trim(value)
+      value -> to_string(value) |> String.trim()
+    end)
+    |> Enum.reject(&(&1 == ""))
+    |> Enum.uniq()
+  end
+
   defp do_fetch_by_states_page(project_slug, state_names, assignee_filter, after_cursor, acc_issues) do
     with {:ok, body} <-
            graphql(@query, %{
@@ -270,6 +357,23 @@ defmodule SymphonyElixir.Linear.Client do
   end
 
   defp finalize_paginated_issues(acc_issues) when is_list(acc_issues), do: Enum.reverse(acc_issues)
+
+  defp deduplicate_issues(issues) when is_list(issues) do
+    issues
+    |> Enum.reduce({MapSet.new(), []}, fn
+      %Issue{id: issue_id} = issue, {seen, acc} when is_binary(issue_id) ->
+        if MapSet.member?(seen, issue_id) do
+          {seen, acc}
+        else
+          {MapSet.put(seen, issue_id), [issue | acc]}
+        end
+
+      issue, {seen, acc} ->
+        {seen, [issue | acc]}
+    end)
+    |> elem(1)
+    |> Enum.reverse()
+  end
 
   defp do_fetch_issue_states(ids, assignee_filter) do
     do_fetch_issue_states(ids, assignee_filter, &graphql/2)
@@ -436,6 +540,35 @@ defmodule SymphonyElixir.Linear.Client do
   end
 
   defp decode_linear_page_response(response, assignee_filter), do: decode_linear_response(response, assignee_filter)
+
+  defp decode_initiative_projects_page(%{
+         "data" => %{
+           "initiative" => %{
+             "projects" => %{
+               "nodes" => nodes,
+               "pageInfo" => %{"hasNextPage" => has_next_page, "endCursor" => end_cursor}
+             }
+           }
+         }
+       })
+       when is_list(nodes) do
+    slugs =
+      nodes
+      |> Enum.map(& &1["slugId"])
+      |> Enum.reject(&is_nil/1)
+
+    {:ok, slugs, %{has_next_page: has_next_page == true, end_cursor: end_cursor}}
+  end
+
+  defp decode_initiative_projects_page(%{"data" => %{"initiative" => nil}}) do
+    {:error, :linear_initiative_not_found}
+  end
+
+  defp decode_initiative_projects_page(%{"errors" => errors}) do
+    {:error, {:linear_graphql_errors, errors}}
+  end
+
+  defp decode_initiative_projects_page(_unknown), do: {:error, :linear_unknown_payload}
 
   defp next_page_cursor(%{has_next_page: true, end_cursor: end_cursor})
        when is_binary(end_cursor) and byte_size(end_cursor) > 0 do

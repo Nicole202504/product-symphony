@@ -50,6 +50,23 @@ tracker:
   project_slug: "your-linear-project-slug"
 ```
 
+For multi-project product work, use a project group:
+
+```yaml
+tracker:
+  project_slugs:
+    - "a-personal-space-rebuild-1c478af653df"
+    - "b-github-skill-ingestion-058deef57088"
+    - "c-landing-page-usable-paths-7024e2fc19ab"
+```
+
+Or use an initiative:
+
+```yaml
+tracker:
+  initiative_id: "your-linear-initiative-id"
+```
+
 ## Why This Solves The Codex Handoff Problem
 
 A new Codex instance only needs to:
