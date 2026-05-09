@@ -41,6 +41,33 @@ The comment must include:
 - Recommendation.
 - Whether the result should merge, continue, convert to build, park, or discard.
 
+## Downstream Tool Feedback
+
+When this repository is used from another business project and you discover a Product Symphony bug,
+missing workflow, unclear instruction, or feature request, report it back to the Product Symphony
+Linear project.
+
+Use `scripts/report-product-symphony-issue.sh` when the environment has:
+
+- `LINEAR_API_KEY`
+- `PRODUCT_SYMPHONY_FEEDBACK_TEAM_KEY`
+- optional `PRODUCT_SYMPHONY_FEEDBACK_PROJECT_SLUG`
+
+Example:
+
+```bash
+./scripts/report-product-symphony-issue.sh \
+  --type bug \
+  --title "bootstrap-linear fails when label already exists" \
+  --source-project "business-project-name" \
+  --command "./scripts/bootstrap-linear.sh --team ENG --brief brief.md" \
+  --expected "Existing labels are reused" \
+  --actual "The command failed during label creation"
+```
+
+If the script cannot run, prepare the same content using `linear/templates/tool-bug.md` or
+`linear/templates/tool-feature.md`.
+
 ## Product Safety
 
 - `mode: explore` and `mode: prototype` are not production merge modes.

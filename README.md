@@ -127,6 +127,25 @@ The command creates:
 - one Linear issue per task;
 - issue descriptions containing mode, deliverable, and acceptance criteria.
 
+## Downstream Feedback Loop
+
+When Product Symphony is used inside another project and the agent finds a Product Symphony problem,
+it should report the issue back to the Product Symphony Linear project:
+
+```bash
+export LINEAR_API_KEY=...
+export PRODUCT_SYMPHONY_FEEDBACK_TEAM_KEY=ENG
+export PRODUCT_SYMPHONY_FEEDBACK_PROJECT_SLUG=product-symphony
+
+./scripts/report-product-symphony-issue.sh \
+  --type bug \
+  --title "bootstrap-linear fails when label already exists" \
+  --source-project "billing-console" \
+  --actual "The command failed during label creation"
+```
+
+See `docs/feedback-loop.md`.
+
 ## Important Files
 
 ```text
@@ -140,6 +159,7 @@ workflows/                      Mode-specific workflow docs.
 elixir/WORKFLOW.product.md      Product-aware Symphony runtime workflow.
 examples/bootstrap-brief.md     Example bootstrap input.
 docs/startup.md                 Runtime setup model and wrapper scripts.
+docs/feedback-loop.md           Automatic issue reporting from downstream projects.
 scripts/                        Stable setup/run entrypoints for new agents.
 elixir/                         Upstream Symphony Elixir implementation.
 ```

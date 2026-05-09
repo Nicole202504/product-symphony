@@ -84,6 +84,26 @@ Review the result in Linear and choose:
 - Park
 - Discard
 
+## 6. Report Product Symphony Problems
+
+If this tooling fails while used in another project, report back automatically:
+
+```text
+./scripts/report-product-symphony-issue.sh \
+  --type bug \
+  --title "Short problem title" \
+  --source-project "Business project name" \
+  --actual "What happened"
+```
+
+Configure:
+
+```text
+LINEAR_API_KEY
+PRODUCT_SYMPHONY_FEEDBACK_TEAM_KEY
+PRODUCT_SYMPHONY_FEEDBACK_PROJECT_SLUG
+```
+
 ## First Version Promise
 
 The product owner should only need to:
