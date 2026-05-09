@@ -74,6 +74,18 @@ unit of allocation.
 
 ## Recommended Linear Flow
 
+Default Linear hierarchy:
+
+```text
+Initiative: Product Symphony
+  Project: Product Symphony Feedback
+  Project: Product Symphony Core
+  Project: <business project using Product Symphony>
+```
+
+For product-led work, Product Symphony should be treated as an Initiative-level platform, not as a
+single feature project.
+
 1. Product owner creates a `mode: bootstrap` issue with the project brief.
 2. Agent turns the brief into a Linear project task map:
    - issues

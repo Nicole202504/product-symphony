@@ -97,6 +97,18 @@ The product owner chooses one decision after every result:
 
 ## 4. Linear Requirements
 
+Default hierarchy:
+
+```text
+Initiative: Product Symphony
+  Project: Product Symphony Feedback
+  Project: Product Symphony Core
+  Project: <business project using Product Symphony>
+```
+
+Product Symphony itself should be modeled as an Initiative because it is a long-lived shared tool.
+Feedback, roadmap, and business delivery can then live in separate Projects under that Initiative.
+
 Required labels:
 
 - `mode: bootstrap`

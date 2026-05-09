@@ -4,6 +4,16 @@ Product Symphony is a shared tool. When a downstream business project finds a Pr
 problem, report it back to the Product Symphony Linear project instead of leaving it inside the
 business project chat.
 
+Default Linear hierarchy:
+
+```text
+Initiative: Product Symphony
+  Project: Product Symphony Feedback
+```
+
+Feedback issues should go to `Product Symphony Feedback`, which lives under the `Product Symphony`
+Initiative.
+
 ## Agent Rule
 
 If you are an agent working in another project and you discover a Product Symphony bug, missing

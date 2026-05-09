@@ -2,6 +2,22 @@
 
 This template assumes Linear is the task source and review surface.
 
+## Default Product Hierarchy
+
+Product Symphony is an Initiative-level platform, not a single project.
+
+Recommended structure:
+
+```text
+Initiative: Product Symphony
+  Project: Product Symphony Feedback
+  Project: Product Symphony Core
+  Project: <business project using Product Symphony>
+```
+
+Use `Product Symphony Feedback` for downstream bug reports, feature requests, and questions.
+Use separate business projects for actual product work.
+
 ## Required Labels
 
 Create these labels:
