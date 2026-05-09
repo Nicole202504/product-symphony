@@ -7,6 +7,7 @@ This template assumes Linear is the task source and review surface.
 Create these labels:
 
 - `mode: explore`
+- `mode: bootstrap`
 - `mode: prototype`
 - `mode: build`
 - `mode: park`
@@ -27,6 +28,7 @@ Recommended optional labels:
 Map these to your existing Linear workflow, or create them if your team wants a dedicated product-agent flow:
 
 - `Idea`
+- `Bootstrap`
 - `Exploring`
 - `Prototype`
 - `Spec Ready`
@@ -41,6 +43,7 @@ Map these to your existing Linear workflow, or create them if your team wants a 
 ## State Guidelines
 
 - `Idea` - raw issue, not ready for agent execution.
+- `Bootstrap` - product brief is being turned into a task map.
 - `Exploring` - active product thinking.
 - `Prototype` - active demo or spike.
 - `Spec Ready` - product has decided what should be built.
@@ -63,4 +66,3 @@ When starting work, tell the agent:
 ```text
 Use Product Symphony. Work from Linear issue <ISSUE-ID>. Read AGENTS.md first, then follow the mode workflow from the issue label.
 ```
-

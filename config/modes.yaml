@@ -1,4 +1,11 @@
 modes:
+  bootstrap:
+    label: "mode: bootstrap"
+    branch_prefix: "product-bootstrap"
+    workflow: "workflows/bootstrap.md"
+    default_merge_policy: "no code merge"
+    default_result: "create task map, ask clarification, or mark ready for execution"
+
   explore:
     label: "mode: explore"
     branch_prefix: "experiment"
@@ -33,4 +40,3 @@ modes:
     workflow: null
     default_merge_policy: "do not merge"
     default_result: "archive context and stop"
-

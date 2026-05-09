@@ -4,6 +4,29 @@ Product Symphony separates product maturity from implementation effort. A Linear
 
 ## Mode Definitions
 
+### `mode: bootstrap`
+
+Use this when the product owner wants to turn an initial project idea into a Linear task map.
+
+Good for:
+
+- Creating the first project issue breakdown.
+- Classifying tasks into explore, prototype, build, park, or discard.
+- Defining deliverables and acceptance criteria.
+
+Allowed outputs:
+
+- Linear task map.
+- Initial issues.
+- Suggested execution order.
+- Missing-question list.
+
+Default merge policy:
+
+```text
+No code merge. This mode creates project structure.
+```
+
 ### `mode: explore`
 
 Use this when the product question is still open.
@@ -100,4 +123,3 @@ The product owner decides:
 - Whether the final result matches the product intent.
 
 AI can suggest, summarize, and implement, but the product owner owns the mode change and final decision.
-

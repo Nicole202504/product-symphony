@@ -15,6 +15,7 @@ Instructions:
 5. Fetch or inspect the target Linear issue.
 6. Determine the issue mode from its mode:* label.
 7. Follow the matching workflow:
+   - mode: bootstrap -> workflows/bootstrap.md
    - mode: explore -> workflows/explore.md
    - mode: prototype -> workflows/prototype.md
    - mode: build -> workflows/build.md

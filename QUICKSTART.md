@@ -24,6 +24,7 @@ Create these labels in Linear:
 
 ```text
 mode: explore
+mode: bootstrap
 mode: prototype
 mode: build
 mode: park
@@ -37,6 +38,7 @@ You can keep your existing Linear states. Labels are enough for the first versio
 Pick the matching template:
 
 - `linear/templates/explore.md`
+- `linear/templates/bootstrap.md`
 - `linear/templates/prototype.md`
 - `linear/templates/build.md`
 

@@ -1,99 +1,108 @@
 # Product Symphony
 
-Product Symphony is a reusable coordination template for product-led AI development with Linear, Codex, Claude Code, and human review.
+Product Symphony is a product-aware fork layer on top of OpenAI Symphony.
 
-It is inspired by OpenAI Symphony, but tuned for product work where some Linear issues are still ideas, some are prototypes, and some are ready for implementation.
-
-## What This Solves
-
-- Multiple AI conversations working on different pages or ideas without stepping on each other.
-- Product context living in Linear instead of scattered chat history.
-- Experimental work that can be explored, reviewed, continued, converted, or discarded without polluting the main codebase.
-- A repeatable path from vague idea to demo to spec to build.
-
-## Core Model
+OpenAI Symphony already solves the engineering orchestration problem:
 
 ```text
-Linear issue
-  -> mode router
-  -> isolated workspace
-  -> agent workflow
-  -> Linear result comment
-  -> product review
-  -> continue / convert / build / merge / discard
+Linear issue -> isolated workspace -> Codex agent -> Linear/PR handoff
 ```
 
-Linear is the control plane. The repo documents define how agents should behave. Git branches or worktrees isolate each issue.
+Product Symphony keeps that structure and adds a product layer:
 
-## Modes
+```text
+Product brief -> Linear project/issues -> mode router -> isolated workspace
+  -> explore/prototype/build workflow -> product review
+```
 
-Use one of these labels on every Linear issue:
+The goal is to let a product owner work from Linear without manually creating worktrees, copying
+context between conversations, or treating every idea as production implementation.
 
-- `mode: explore` - unclear idea, discussion and discovery allowed, code optional.
-- `mode: prototype` - product direction is plausible, create a demo or spike, not production by default.
-- `mode: build` - spec is clear, implement production-ready changes and prepare for review.
-- `mode: park` - recorded but not active.
-- `mode: discard` - intentionally abandoned.
+## What Is Different From Upstream Symphony
 
-The most important rule:
+Product Symphony adds:
+
+- Product bootstrap guidance for creating the initial Linear project and issue set.
+- `mode:*` labels that route issues into product workflows.
+- Product-specific Linear templates and review decisions.
+- A product-oriented Symphony workflow at `elixir/WORKFLOW.product.md`.
+
+It preserves the upstream Symphony shape:
+
+- `SPEC.md` is the upstream service specification.
+- `elixir/` contains the upstream Elixir/OTP reference implementation.
+- Per-issue workspace allocation is handled by Symphony's existing workspace manager.
+- Codex agent execution is handled by Symphony's existing agent runner.
+
+## Product Modes
+
+Use exactly one mode label on each Linear issue:
+
+- `mode: bootstrap` - create or refine the project's Linear task map.
+- `mode: explore` - clarify a product question; code is optional and not merge-bound.
+- `mode: prototype` - build a demo or spike; not production by default.
+- `mode: build` - implement production-ready code and prepare for review.
+- `mode: park` - keep the idea but do not execute.
+- `mode: discard` - intentionally abandon.
+
+The core rule:
 
 ```text
 explore/prototype do not merge by default.
 build is the only mode that targets production merge by default.
 ```
 
-## Daily Usage
+## How The Automated Worktree Assignment Works
 
-1. Create or update a Linear issue.
-2. Add one `mode:*` label.
-3. Fill the matching template from `linear/templates/`.
-4. Start Codex or Claude Code in the project.
-5. Tell the agent: "Work from Linear issue ABC-123 using Product Symphony."
-6. The agent reads `AGENTS.md`, `PRODUCT_WORKFLOW.md`, and the mode workflow.
-7. The agent works in an isolated branch/worktree and posts a Linear result comment.
-8. You review in Linear and decide the next state.
+Use the Elixir Symphony runner with the product workflow:
 
-## Recommended Linear States
-
-- `Idea`
-- `Exploring`
-- `Prototype`
-- `Spec Ready`
-- `Ready for Dev`
-- `In Build`
-- `Review`
-- `Ready to Merge`
-- `Done`
-- `Parked`
-- `Discarded`
-
-If your Linear team already has states, map these concepts onto existing names instead of renaming everything on day one.
-
-## Repository Layout
-
-```text
-AGENTS.md
-PRODUCT_WORKFLOW.md
-LINEAR_SETUP.md
-LINEAR_ACCESS.md
-linear/
-  templates/
-    explore.md
-    prototype.md
-    build.md
-    result-comment.md
-workflows/
-  mode-router.md
-  explore.md
-  prototype.md
-  build.md
-  review.md
-config/
-  modes.yaml
+```bash
+cd elixir
+./bin/symphony ./WORKFLOW.product.md
 ```
 
-## First Project Setup
+The runner polls the configured Linear project. For every eligible issue, it:
 
-Copy these files into a project repo. Then create the Linear labels listed in `LINEAR_SETUP.md`. After that, new agents should be able to read the repo and understand how to use Linear as the task source.
+1. Reads the issue and labels from Linear.
+2. Creates an isolated workspace under `workspace.root`.
+3. Runs `hooks.after_create` to clone/bootstrap the target repo.
+4. Starts Codex in that workspace.
+5. Sends the product-aware workflow prompt.
+6. Lets the agent update Linear according to the mode.
 
-For agent access patterns, read `LINEAR_ACCESS.md`.
+That means Product Symphony does not need a separate manual worktree step. The issue itself is the
+unit of allocation.
+
+## Recommended Linear Flow
+
+1. Product owner creates a `mode: bootstrap` issue with the project brief.
+2. Agent turns the brief into a Linear project task map:
+   - issues
+   - mode labels
+   - deliverables
+   - acceptance criteria
+3. Symphony runs against that Linear project.
+4. `mode: build` issues can be handled autonomously by coding agents.
+5. `mode: explore` and `mode: prototype` issues create isolated workspaces for product discussion,
+   demo work, and product review.
+6. Product owner decides whether to continue, convert to build, park, discard, or merge.
+
+## Important Files
+
+```text
+PRODUCT_SPEC.md                 Product-specific architecture and behavior.
+PRODUCT_WORKFLOW.md             Human-readable product workflow.
+LINEAR_SETUP.md                 Linear labels/states to create.
+LINEAR_ACCESS.md                Agent access rules for Linear.
+LINEAR_AGENT_PROMPT.md          Manual fallback prompt for Codex/Claude.
+linear/templates/               Issue and result comment templates.
+workflows/                      Mode-specific workflow docs.
+elixir/WORKFLOW.product.md      Product-aware Symphony runtime workflow.
+elixir/                         Upstream Symphony Elixir implementation.
+```
+
+## License And Attribution
+
+The Symphony implementation is based on OpenAI's Apache-2.0 licensed Symphony project. See
+`LICENSE`, `NOTICE`, and `SPEC.md`.
+
