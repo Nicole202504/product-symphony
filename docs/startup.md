@@ -41,6 +41,8 @@ export PRODUCT_SYMPHONY_TARGET_REPO=git@github.com:org/repo.git
 ./scripts/run-product-symphony.sh
 ```
 
+The wrapper scripts also load `.env.local` from the repository root when it exists.
+
 Before running the daemon, update `elixir/WORKFLOW.product.md`:
 
 ```yaml
@@ -59,4 +61,3 @@ A new Codex instance only needs to:
 
 The pinned toolchain remains upstream-compatible, while the wrapper scripts provide a stable,
 product-friendly entrypoint.
-

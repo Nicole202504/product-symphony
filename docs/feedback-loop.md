@@ -33,6 +33,8 @@ export PRODUCT_SYMPHONY_FEEDBACK_PROJECT_SLUG=product-symphony
 `PRODUCT_SYMPHONY_FEEDBACK_PROJECT_SLUG` is optional. If it is omitted, the issue is created in the
 team without attaching it to a project.
 
+The reporter script also loads `.env.local` from the repository root when it exists.
+
 ## Issue Types
 
 - `bug` -> `tool-bug`
@@ -73,4 +75,3 @@ Good feedback issues include:
 3. Product Symphony issue is triaged and fixed.
 4. Fix is pushed to GitHub.
 5. Downstream project updates its Product Symphony clone or submodule.
-

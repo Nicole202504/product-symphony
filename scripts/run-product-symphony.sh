@@ -5,6 +5,11 @@ ROOT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 ELIXIR_DIR="$ROOT_DIR/elixir"
 WORKFLOW_PATH="${1:-$ELIXIR_DIR/WORKFLOW.product.md}"
 
+if [ -f "$ROOT_DIR/.env.local" ]; then
+  # shellcheck disable=SC1091
+  . "$ROOT_DIR/.env.local"
+fi
+
 if [ ! -x "$ELIXIR_DIR/bin/symphony" ]; then
   echo "Missing elixir/bin/symphony. Run ./scripts/setup.sh first."
   exit 1
@@ -26,4 +31,3 @@ cd "$ELIXIR_DIR"
 mise exec -- ./bin/symphony \
   --i-understand-that-this-will-be-running-without-the-usual-guardrails \
   "$WORKFLOW_PATH"
-

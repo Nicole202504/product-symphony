@@ -146,6 +146,9 @@ export PRODUCT_SYMPHONY_FEEDBACK_PROJECT_SLUG=product-symphony
 
 See `docs/feedback-loop.md`.
 
+The scripts load `.env.local` from the repository root when present. Keep real secrets in
+`.env.local`; commit only `.env.example`.
+
 ## Important Files
 
 ```text
